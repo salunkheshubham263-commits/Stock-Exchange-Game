@@ -14,9 +14,10 @@ nav{
     display: flex;
     background-color: rgba(156, 155, 155, 0.947);
     color: black;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     align-items: center;
+    cursor: default;
     justify-content: space-between;
 }
 
@@ -32,6 +33,21 @@ body.Logo_body .main{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+body.Logo_body .main .Logo{
+    opacity: 0;
+    animation: flicker 3s infinite;
+}
+
+@keyframes flicker{
+    0%,19%,21%,23%,25%,54%,56%,100%{
+        opacity: 1;
+        filter: drop-shadow(0 0 15px lime);
+    }
+    20%,22%,24%,55%{
+        opacity: 0.5;
+        filter: none;
+    }
 }
 
 body.Logo_body p{
@@ -124,7 +140,16 @@ body.home_page .main{
     width: 100%;
     height: 100vh;
 }
-body.home_page .main .leaderboard{
+body.home_page .main nav .account_icon{
+    width: 4vw;
+    height: 4vw;
+    cursor: pointer;
+    transition: transform ease 0.5s;
+}
+body.home_page .main nav .account_icon:hover{
+    transform: rotateY(180deg);
+}
+body.home_page .main nav .leaderboard{
     width: 10vw;
     color: black;
     background-color: white;
@@ -133,8 +158,14 @@ body.home_page .main .leaderboard{
     font-weight: 600;
     border: 1.5px solid black;
     border-radius: 25px;
+    transition: ease 0.5s;
+    cursor: pointer;
 }
-body.home_page .main .help{
+body.home_page .main nav .leaderboard:hover{
+    background-color: black;
+    color: white;
+}
+body.home_page .main nav .help{
     width: 10vw;
     color: black;
     background-color: white;
@@ -143,8 +174,19 @@ body.home_page .main .help{
     font-weight: 600;
     border: 1.5px solid black;
     border-radius: 25px;
+    cursor: pointer;
+    transition: ease 0.5s;
 }
-body.home_page .main .money{
+body.home_page .main nav .help:hover{
+    background-color: black;
+    color: white;
+}
+body.home_page .main nav .money_container .money_icon{
+    width: 3.5vw;
+    height: 3vw;
+
+}
+body.home_page .main nav .money_container .money{
     width: 10vw;
     color: black;
     background-color: white;
@@ -156,4 +198,115 @@ body.home_page .main .money{
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: default;
+}
+body.home_page .main nav .setting_icon{
+    width: 4vw;
+    height: 4vw;
+    cursor: pointer;
+    transition: ease 0.5s;
+}
+body.home_page .main nav .setting_icon:hover{
+    transform: rotate(60deg);
+}
+
+body.home_page .main .hero1{
+    width: 100%;
+    height: 90vh;
+    display: flex;
+}
+body.home_page .main .hero1 .chart_container{
+    width: 70%;
+    height: 100%;
+}
+body.home_page .main .hero1 .chart_container .chart_box{
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+}
+body.home_page .main .hero1 .chart_container .footer{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    background-color: rgba(156, 155, 155, 0.947);
+    color: black;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: default;
+    justify-content: space-between;
+}
+body.home_page .main .hero1 .chart_container .footer .history{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 1.5px solid black;
+    cursor: pointer;
+    transition: ease 0.5s;
+}
+body.home_page .main .hero1 .chart_container .footer .history:hover{
+    background-color: black;
+    color: white;
+}
+body.home_page .main .hero1 .chart_container .footer .buy_sell{
+    width: 35%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+body.home_page .main .hero1 .chart_container .footer .buy_sell .buy{
+    width: 20vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 1.5px solid black;
+    cursor: pointer;
+    transition: ease 0.5s;
+}
+body.home_page .main .hero1 .chart_container .footer .buy_sell .buy:hover{
+    background-color: rgba(13, 165, 13, 0.893);;
+    color: white;
+}
+body.home_page .main .hero1 .chart_container .footer .buy_sell .sell{
+    width: 20vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 1.5px solid black;
+    cursor: pointer;
+    transition: ease 0.5s;
+}
+body.home_page .main .hero1 .chart_container .footer .buy_sell .sell:hover{
+    background-color: red;
+    color: white;
+}
+body.home_page .main .hero1 .LOC{
+    width: 30%;
+    height: 100%;
+    overflow: auto;
+}
+body.home_page .main .hero1 .LOC .list_of_companies{
+    width: 100%;
+    height: 5%;
+    background-color: black;
 }
