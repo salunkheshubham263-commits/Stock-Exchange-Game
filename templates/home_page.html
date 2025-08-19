@@ -17,6 +17,27 @@
     <link rel="stylesheet" href="../static/css/global_style.css" />
   </head>
   <body class="home_page">
+    <div class="form" id="login_form">
+      <h1 align="center" style="color: black;">Login</h1><br>
+      <hr style="border: 0.5px solid black;" /><br>
+      <form action="" method="post">
+          <input class="name1" id="email1" type="email" name="email" placeholder="Enter your Username or Email id" required /><br>
+          <input class="name1" id="pass1" type="password" name="password" placeholder="Enter your password" required /><br>
+          <a class="forgot_password" style="color: blue; cursor: pointer;">Forgot Password?</a><br><br><br><br><br><br>
+          <input type="submit" id="u_login" name="login" value="LOGIN" class="login_button" /><br>
+          <p style="color: black; font-weight: 500;">New player? <a class="sign_up" style="color: blue; cursor: pointer;">Sign up!</a></p>
+      </form>
+    </div>
+    <div class="form" id="forgotPassword_form" style="z-index: 98; display: none;">
+      <h1 align="center" style="color: black;">Forgot Password</h1><br>
+      <hr style="border: 0.5px solid black;" /><br>
+      <form action="" method="post">
+          <input class="name1" type="email" name="email" placeholder="Enter your Email id" required />
+          <p style="color: black; font-weight: 500; font-size: 0.9vw;">We will send you a password through a email</p><br>
+          <input type="submit" name="Pass" value="Get Password" class="login_button" id="get_pass"/><br>
+          <input type="submit" name="back" value="Back" class="login_button" id="back_login"/>
+      </form>
+    </div>
     <div class="main">
       <nav>
         <img src="../static/images/account.png" class="account_icon" />
