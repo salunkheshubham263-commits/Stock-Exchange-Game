@@ -16,6 +16,10 @@ if(document.body.classList.contains('home_page')){
     const password = document.querySelector("#forgotPassword_form");
     const Back_button = document.querySelector("#back_login");
     const loginButton = document.querySelector("#u_login");
+    const signUpButton = document.querySelector(".sign_up");
+    const signUpForm = document.querySelector("#signUp_form");
+    const Back_button1 = document.querySelector("#back_login2");
+    const signUpButton1 = document.querySelector("#signUp_button");
     
     forgotPassword.addEventListener("click", () => {
         password.style.display = "block";
@@ -27,12 +31,36 @@ if(document.body.classList.contains('home_page')){
     })
     loginButton.addEventListener("click", () => {
         const email = document.querySelector("#email1").value;
-        const pass = document.querySelector("pass1").value;
+        const pass = document.querySelector("#pass1").value;
 
         if(email === "" || pass === ""){
             alert("Please fill email and password");
         }else{
         loginForm.style.display = "none";
+        main.style.filter = "blur(0)";
+        }
+    })
+    signUpButton.addEventListener("click", () => {
+        loginForm.style.display = "none";
+        signUpForm.style.display = "block";
+    })
+    Back_button1.addEventListener("click", () => {
+        signUpForm.style.display = "none";
+        loginForm.style.display = "block";
+    })
+    signUpButton1.addEventListener("click", () => {
+        const email = document.querySelector("#email2").value;
+        const pass = document.querySelector("#pass2").value;
+        const firstName = document.querySelector("#first_name").value;
+        const lastName = document.querySelector("#last_name").value;
+        const username = document.querySelector("#username").value;
+
+
+
+        if(email === "" || pass === "" || firstName === "" || lastName === "" || username === ""){
+            alert("Please fill all required information!");
+        }else{
+        signUpForm.style.display = "none";
         main.style.filter = "blur(0)";
         }
     })
