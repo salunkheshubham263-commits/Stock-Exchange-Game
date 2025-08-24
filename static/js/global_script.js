@@ -36,6 +36,7 @@ if(document.body.classList.contains('home_page')){
     const signUpForm = document.querySelector("#signUp_form");
     const Back_button1 = document.querySelector("#back_login2");
     const signUpButton1 = document.querySelector("#signUp_button");
+    const leaderBoard = document.querySelector(".leaderboard");
     
     forgotPassword.addEventListener("click", () => {
         password.style.display = "block";
@@ -79,5 +80,16 @@ if(document.body.classList.contains('home_page')){
         signUpForm.style.display = "none";
         main.style.filter = "blur(0)";
         }
+    })
+
+    leaderBoard.addEventListener("click", () => {
+        window.location.href = "leaderBoard.html";
+    })
+}
+if(document.body.classList.contains('leaderBoard_page')){
+    const back = document.querySelector(".back_png");
+
+    back.addEventListener("click", () => {
+        window.location.href = "home_page.html";
     })
 }
