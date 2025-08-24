@@ -37,6 +37,7 @@ if(document.body.classList.contains('home_page')){
     const Back_button1 = document.querySelector("#back_login2");
     const signUpButton1 = document.querySelector("#signUp_button");
     const leaderBoard = document.querySelector(".leaderboard");
+    const digital_clock = document.querySelector(".digital-clock");
     
     forgotPassword.addEventListener("click", () => {
         password.style.display = "block";
@@ -85,6 +86,21 @@ if(document.body.classList.contains('home_page')){
     leaderBoard.addEventListener("click", () => {
         window.location.href = "leaderBoard.html";
     })
+
+    function updateClock(){
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2,'0');
+        const ampm = hours >= 12 ? 'Pm' : 'Am';
+
+        hours = hours % 12;
+        hours = hours ? hours : 12; // "0" should be "12"
+
+        digital_clock.textContent = `${hours}:${minutes}${ampm}`;
+    }
+
+    setInterval(updateClock, 1000); //refresh every srconds
+    updateClock(); //run once at start
 }
 if(document.body.classList.contains('leaderBoard_page')){
     const back = document.querySelector(".back_png");
