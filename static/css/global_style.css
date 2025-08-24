@@ -191,10 +191,13 @@ body.home_page .form form .login_button:hover{
     color: white;
     cursor: pointer;
 }
-body.home_page .form form #back_login,#back_login2:hover{
+body.home_page .form form #back_login:hover{
     background-color: red;
     color: white;
-    cursor: pointer;
+}
+body.home_page .form form #back_login2:hover{
+    background-color: red;
+    color: white;
 }
 body.home_page .main nav .account_icon{
     width: 4vw;

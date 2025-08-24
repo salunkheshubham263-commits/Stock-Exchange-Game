@@ -1,13 +1,29 @@
+if(document.body.classList.contains('Logo_body')){
+    // After 5 seconds move to loading page.
+
+    setTimeout(() => {
+        window.location.href = "loading_page.html";
+    }, 5000);
+}
+
+
 if(document.body.classList.contains('loading_page')){
     const START = document.querySelector(".start");
     const loader = document.querySelector(".loading_line");
     const privacy = document.querySelector(".privacy")
+    const loader_line = document.querySelector(".internal_loading_line")
 
     START.addEventListener("click", () => {
         loader.style.display = "flex";
         privacy.style.display = "none";
         START.style.display = "none";
     })
+    // when loading line width is 100% move to home page.
+
+    loader_line.addEventListener("animationend", () => {
+        window.location.href = "home_page.html";
+    })
+
 }
 if(document.body.classList.contains('home_page')){
     const main = document.querySelector(".main");
