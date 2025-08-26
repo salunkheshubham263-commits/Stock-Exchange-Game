@@ -3,7 +3,10 @@ import sqlite3
 
 app = Flask(__name__)
 import os
-app.secret_key = "os.urandom(24)"
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+app.secret_key = os.urandom(24)
 
 @app.route("/home")
 def home():
@@ -42,8 +45,8 @@ def login():
     password = request.form['password']
 
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE email=? AND password=?",
-                        (email, password)).fetchone()
+    user = conn.execute("SELECT * FROM Users_info WHERE (Username=? OR Email_ID=?) AND Password=?",
+                        (email, email, password)).fetchone()
     conn.close()
 
     if user:
@@ -54,17 +57,57 @@ def login():
         return redirect(url_for('home'))
 
 @app.route('/forgetPassword', methods=['POST'])
-def forgot_password():
+def forget_password():
     email = request.form['email']
-    new_password = "123456"  # Or generate a random one
 
     conn = get_db_connection()
-    conn.execute("UPDATE users SET password=? WHERE email=?", (new_password, email))
-    conn.commit()
+    user = conn.execute("SELECT Password FROM Users_info WHERE Email_ID=?", (email,)).fetchone()
+
+    if user:
+        password = user["Password"]
+        # Here you would send the password to the user's email or handle password reset logic
     conn.close()
 
-    flash("New password set. Please check your email.", "info")
+    flash("If the email exists, instructions have been sent.", "info")
     return redirect(url_for('home'))
+
+@app.route('/sendPassword', methods=['POST'])
+def send_password():
+        email = request.form['email']
+
+        conn = get_db_connection()
+        user = conn.execute("SELECT Password FROM Users_info WHERE Email_ID=?", (email,)).fetchone()
+        conn.close()
+
+        if user:
+            password = user["Password"]
+            # Email configuration
+            sender_email = "your_email@example.com"
+            sender_password = "your_email_password"
+            receiver_email = email
+
+            subject = "Your Password for Stock Exchange Game"
+            body = f"Your password is: {password}"
+
+            msg = MIMEMultipart()
+            msg['From'] = sender_email
+            msg['To'] = receiver_email
+            msg['Subject'] = subject
+            msg.attach(MIMEText(body, 'plain'))
+
+            try:
+                with smtplib.SMTP('smtp.gmail.com', 587) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, receiver_email, msg.as_string())
+                flash("Password sent to your email.", "success")
+            except Exception as e:
+                flash("Failed to send email. Please try again later.", "danger")
+        else:
+            flash("Email not found.", "danger")
+
+        return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
