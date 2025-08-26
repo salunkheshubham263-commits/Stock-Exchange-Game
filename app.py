@@ -1,57 +1,70 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, request, redirect, url_for, flash, render_template
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = "secretkey"   # needed for sessions and flash messages
+import os
+app.secret_key = "os.urandom(24)"
 
-# Function to connect to SQLite database
-def get_db_connection():
-    conn = sqlite3.connect("stock_game.db")   # database file in your project
-    conn.row_factory = sqlite3.Row            # lets us use dict-like access
-    return conn
-
-
-# ------------------- ROUTES -------------------
-
-# Login Page
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user:
-            session["user"] = username
-            return redirect(url_for("home"))
-        else:
-            flash("Invalid username or password", "danger")
-
-    return render_template("home_page.html")
-
-
-# Home Page
 @app.route("/home")
 def home():
-    if "user" in session:
-        return f"Welcome, {session['user']}!"
+    return render_template("home_page.html")
+
+def get_db_connection():
+    conn = sqlite3.connect('stock_game.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/signUp', methods=['POST'])
+def signup():
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    username = request.form['Username']
+    email = request.form['email']
+    password = request.form['password']   # You should hash this!
+
+    conn = get_db_connection()
+    try:
+        conn.execute("INSERT INTO Users_info (First_Name, Last_Name, Username, Email_ID, Password) VALUES (?, ?, ?, ?, ?)",
+                     (first_name, last_name, username, email, password))
+        conn.commit()
+        flash("Account created successfully. Please login.", "success")
+    except:
+        flash("Error: Username or Email already exists.", "danger")
+    finally:
+        conn.close()
+
+    return redirect(url_for('home'))  # or wherever you want to go after signup
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['email']
+    password = request.form['password']
+
+    conn = get_db_connection()
+    user = conn.execute("SELECT * FROM users WHERE email=? AND password=?",
+                        (email, password)).fetchone()
+    conn.close()
+
+    if user:
+        flash("Login successful!", "success")
+        return redirect(url_for('dashboard'))
     else:
-        return redirect(url_for("login"))
+        flash("Invalid email or password.", "danger")
+        return redirect(url_for('home'))
 
+@app.route('/forgetPassword', methods=['POST'])
+def forgot_password():
+    email = request.form['email']
+    new_password = "123456"  # Or generate a random one
 
-# Logout
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-    flash("You have been logged out.", "info")
-    return redirect(url_for("login"))
+    conn = get_db_connection()
+    conn.execute("UPDATE users SET password=? WHERE email=?", (new_password, email))
+    conn.commit()
+    conn.close()
 
+    flash("New password set. Please check your email.", "info")
+    return redirect(url_for('home'))
 
-# ------------------- MAIN -------------------
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
