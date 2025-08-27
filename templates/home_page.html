@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="../static/css/global_style.css" />
   </head>
   <body class="home_page">
-    <div class="form" id="login_form" style="z-index: 99; display: block;">
+    <div class="form" id="login_form" style="z-index: 99; display: {{'block' if show_forms else 'none'}};">
       <h1 align="center" style="color: black">Login</h1>
       <br />
       <hr style="border: 0.5px solid black" />
@@ -55,11 +55,7 @@
         </p>
       </form>
     </div>
-    <div
-      class="form"
-      id="forgotPassword_form"
-      style="z-index: 98; display: none"
-    >
+    <div class="form" id="forgotPassword_form" style="z-index: 98; display: none">
       <h1 align="center" style="color: black">Forgot Password</h1>
       <br />
       <hr style="border: 0.5px solid black" />
@@ -92,11 +88,7 @@
         />
       </form>
     </div>
-    <div
-      class="form"
-      id="signUp_form"
-      style="z-index: 97; display: block; overflow: auto; display: none;"
-    >
+    <div class="form" id="signUp_form" style="z-index: 97; overflow: auto; display: none;">
       <h1 align="center" style="color: black">Sign UP.</h1>
       <br />
       <hr style="border: 0.5px solid black" />

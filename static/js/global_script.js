@@ -2,7 +2,7 @@ if(document.body.classList.contains('Logo_body')){
     // After 5 seconds move to loading page.
 
     setTimeout(() => {
-        window.location.href = "loading_page.html";
+        window.location.href = "/loading";
     }, 5000);
 }
 
@@ -21,7 +21,7 @@ if(document.body.classList.contains('loading_page')){
     // when loading line width is 100% move to home page.
 
     loader_line.addEventListener("animationend", () => {
-        window.location.href = "home_page.html";
+        window.location.href = "/home";
     })
 
 }
