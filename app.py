@@ -2,11 +2,19 @@ from flask import Flask, request, redirect, url_for, flash, render_template
 import sqlite3
 
 app = Flask(__name__)
+
+import os
+from dotenv import load_dotenv
+
 import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 app.secret_key = os.urandom(24)
+
+@app.route("/")
+def intro():
+    return render_template("logo.html")
 
 @app.route("/home")
 def home():
@@ -45,7 +53,7 @@ def login():
     password = request.form['password']
 
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM Users_info WHERE (Username=? OR Email_ID=?) AND Password=?",
+    user = conn.execute("SELECT * FROM Users_info WHERE Email_ID=? AND Password=?",
                         (email, email, password)).fetchone()
     conn.close()
 
@@ -82,8 +90,8 @@ def send_password():
         if user:
             password = user["Password"]
             # Email configuration
-            sender_email = "your_email@example.com"
-            sender_password = "your_email_password"
+            sender_email = os.getenv("EMAIL_USER")
+            sender_password = os.getenv("EMAIL_PASS")
             receiver_email = email
 
             subject = "Your Password for Stock Exchange Game"
@@ -109,5 +117,7 @@ def send_password():
         return redirect(url_for('home'))
 
 
+
+load_dotenv()
 if __name__ == '__main__':
     app.run(debug=True)
