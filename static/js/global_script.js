@@ -25,6 +25,13 @@ if(document.body.classList.contains('loading_page')){
     })
 
 }
+if(document.body.classList.contains('privacyPolicy')){
+    const back = document.querySelector(".back");
+
+    back.addEventListener("click", () => {
+        window.location.href = "loading_page.html"
+    })
+}
 if(document.body.classList.contains('home_page')){
     const main = document.querySelector(".main");
     const forgotPassword = document.querySelector(".forgot_password");
