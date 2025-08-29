@@ -32,8 +32,7 @@ if(document.body.classList.contains('privacyPolicy')){
         window.location.href = "loading_page.html"
     })
 }
-if(document.body.classList.contains('home_page')){
-    const main = document.querySelector(".main");
+if(document.body.classList.contains('form_page')){
     const forgotPassword = document.querySelector(".forgot_password");
     const loginForm = document.querySelector("#login_form");
     const password = document.querySelector("#forgotPassword_form");
@@ -43,10 +42,8 @@ if(document.body.classList.contains('home_page')){
     const signUpForm = document.querySelector("#signUp_form");
     const Back_button1 = document.querySelector("#back_login2");
     const signUpButton1 = document.querySelector("#signUp_button");
-    const leaderBoard = document.querySelector(".leaderboard");
-    const digital_clock = document.querySelector(".digital-clock");
-    
-    forgotPassword.addEventListener("click", () => {
+
+        forgotPassword.addEventListener("click", () => {
         password.style.display = "block";
         loginForm.style.display = "none";
     })
@@ -62,7 +59,6 @@ if(document.body.classList.contains('home_page')){
             alert("Please fill email and password");
         }else{
         loginForm.style.display = "none";
-        main.style.filter = "blur(0)";
         }
     })
     signUpButton.addEventListener("click", () => {
@@ -89,6 +85,12 @@ if(document.body.classList.contains('home_page')){
         main.style.filter = "blur(0)";
         }
     })
+
+}
+if(document.body.classList.contains('home_page')){
+    const leaderBoard = document.querySelector(".leaderboard");
+    const digital_clock = document.querySelector(".digital-clock");
+    
 
     leaderBoard.addEventListener("click", () => {
         window.location.href = "leaderBoard.html";
