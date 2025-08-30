@@ -1,21 +1,19 @@
 import sqlite3
 
-def init_db():
-    #connect to database (creates users.db if it doesn't exist)
-    conn = sqlite3.connect('stock_game.db')
-    cursor = conn.cursor()
-    # Create users table
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Users_info
-              (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                First_Name Text not null,
-                Last_Name text not null,
-                Username text unique not null,
-                Email_ID text unique not null,
-                Password text not null
-              )''')
-    conn.commit()
-    conn.close()
+# Connect to the SQLite database (change 'your_database.db' to your actual database file)
+conn = sqlite3.connect('your_database.db')
+cursor = conn.cursor()
 
-if __name__ == "__main__":
-    init_db()
-    print("Database initialized with Users_info table.")
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Leaderboard (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    portfolio_value INTEGER DEFAULT 0,
+    balance INTEGER DEFAULT 0,
+    net_worth INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES Users_info(id)
+)
+""")
+
+conn.commit()
+conn.close()

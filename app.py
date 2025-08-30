@@ -114,6 +114,44 @@ def forget_password():
 
     return redirect(url_for('home'))
 
+@app.route('/leaderboard')
+def leaderboard():
+    conn = get_db_connection()
+    
+    
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+def update_leaderboard(user_id, portfolio_value, balance):
+    net_worth = portfolio_value + balance
+    conn = get_db_connection()
+    conn.execute("""
+        INSERT INTO Leaderboard (user_id, portfolio_value, balance, net_worth)
+        VALUES (?, ?, ?, ?)
+    """, (user_id, portfolio_value, balance, net_worth))
+    conn.commit()
+    conn.close()
+
+def get_leaderboard():
+    conn = get_db_connection()
+    rows = conn.execute("""
+        SELECT u.Username, l.portfolio_value, l.balance, l.net_worth
+        FROM Leaderboard l
+        JOIN Users_info u ON l.user_id = u.id
+        ORDER BY l.net_worth DESC
+        LIMIT 10
+    """).fetchall()
+    conn.close()
+    return rows  
+
+@app.route('/leaderboard')
+def leaderboard():
+    leaderboard_data = get_leaderboard()
+    return render_template("leaderBoard.html", leaderboard=leaderboard_data)
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacyPolicy.html")
+
