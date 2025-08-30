@@ -434,5 +434,5 @@ body.help_page .main {
     border: 2px solid green;
 }
 body.help_page .main .back{
-    
+    color: red;
 }
