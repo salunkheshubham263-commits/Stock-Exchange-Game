@@ -21,11 +21,22 @@ def intro():
 def loading():
     return render_template("loading_page.html")
 
+@app.route("/form")
+def form():
+    return render_template("form.html")
+
 @app.route("/home")
 def home():
+    conn = sqlite3.connect("stock_game.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT Username,Balance FROM Users_info where id=?",(session["user_id"],))
+
+    users = cur.fetchone()
+    conn.close()
     # If user logged in, hide forms on the page by sending show_forms=False
     show_forms = "user" not in session
-    return render_template("home_page.html", show_forms=show_forms)
+    return render_template("home_page.html", show_forms=show_forms, user=users)
 
 def get_db_connection():
     conn = sqlite3.connect('stock_game.db')
@@ -42,16 +53,18 @@ def signup():
 
     conn = get_db_connection()
     try:
-        conn.execute("INSERT INTO Users_info (First_Name, Last_Name, Username, Email_ID, Password) VALUES (?, ?, ?, ?, ?)",
+        cursor = conn.execute("INSERT INTO Users_info (First_Name, Last_Name, Username, Email_ID, Password) VALUES (?, ?, ?, ?, ?)",
                      (first_name, last_name, username, email, password))
         conn.commit()
         # log the user in immediately after sign up
+        user_id = cursor.lastrowid
+        session['user_id'] = user_id
         session['user'] = username
         flash("Account created successfully. You are now logged in.", "success")
         return redirect(url_for('home'))
     except Exception as e:
         flash("Error: Username or Email already exists.", "danger")
-        return redirect(url_for('home'))
+        return redirect(url_for('form'))
     finally:
         conn.close()
 
@@ -67,12 +80,13 @@ def login():
 
     if user:
         # mark user as logged in
+        session['user_id'] = user['id']
         session['user'] = user['Username']
         flash("Login successful!", "success")
         return redirect(url_for('home'))   # redirect to home where forms are hidden
     else:
         flash("Invalid email or password.", "danger")
-        return redirect(url_for('home'))
+        return redirect(url_for('form'))
 
 
 @app.route('/forgetPassword', methods=['POST'])
@@ -112,46 +126,37 @@ def forget_password():
     else:
         flash("Email not found.", "danger")
 
-    return redirect(url_for('home'))
+    return redirect(url_for('form'))
+
 
 @app.route('/leaderboard')
-def leaderboard():
-    conn = get_db_connection()
-    
-    
-    
+def leaderboard(): 
+    leaderboard_data = get_leaderboard()
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-def update_leaderboard(user_id, portfolio_value, balance):
-    net_worth = portfolio_value + balance
-    conn = get_db_connection()
-    conn.execute("""
-        INSERT INTO Leaderboard (user_id, portfolio_value, balance, net_worth)
-        VALUES (?, ?, ?, ?)
-    """, (user_id, portfolio_value, balance, net_worth))
-    conn.commit()
-    conn.close()
+    return render_template("leaderBoard.html", leaderboard=leaderboard_data)
 
 def get_leaderboard():
     conn = get_db_connection()
     rows = conn.execute("""
-        SELECT u.Username, l.portfolio_value, l.balance, l.net_worth
-        FROM Leaderboard l
-        JOIN Users_info u ON l.user_id = u.id
-        ORDER BY l.net_worth DESC
-        LIMIT 10
-    """).fetchall()
+    SELECT
+        Username,
+        Portfolio_value,
+        Balance,
+        (Portfolio_value + Balance) AS Net_Worth
+    FROM Users_info
+    ORDER BY Net_Worth DESC
+    LIMIT 10
+""").fetchall()
     conn.close()
-    return rows  
+    return rows
 
-@app.route('/leaderboard')
-def leaderboard():
-    leaderboard_data = get_leaderboard()
-    return render_template("leaderBoard.html", leaderboard=leaderboard_data)
+@app.route("/help")
+def help():
+    return render_template("help.html")
 
 @app.route("/privacy")
 def privacy():
     return render_template("privacyPolicy.html")
 
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000, debug=True)

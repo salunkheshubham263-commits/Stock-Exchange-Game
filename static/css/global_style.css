@@ -134,6 +134,9 @@ body.loading_page .main .bottom .loading_line .internal_loading_line{
     }
 }
 /* This code which is given below is for designing the Privacy Policy Page */
+body.privacyPolicy{
+    background-color: black;
+}
 body.privacyPolicy .main{
     width: 100%;
     height: auto;
@@ -427,6 +430,9 @@ body.leaderBoard_page .main .leader_board{
 body.leaderBoard_page .main .leader_board td{
     text-align: center;
 }
+
+/* From here we wii design help page */
+
 body.help_page .main {
     background-color: black;
     width: 100%;
@@ -434,5 +440,6 @@ body.help_page .main {
     border: 2px solid green;
 }
 body.help_page .main .back{
-    color: red;
+    width: 4vw;
+    cursor: pointer;
 }

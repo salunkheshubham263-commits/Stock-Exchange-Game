@@ -21,7 +21,7 @@ if(document.body.classList.contains('loading_page')){
     // when loading line width is 100% move to home page.
 
     loader_line.addEventListener("animationend", () => {
-        window.location.href = "/home";
+        window.location.href = "/form  ";
     })
 
 }
@@ -29,7 +29,7 @@ if(document.body.classList.contains('privacyPolicy')){
     const back = document.querySelector(".back");
 
     back.addEventListener("click", () => {
-        window.location.href = "loading_page.html"
+        window.location.href = "/loading"
     })
 }
 if(document.body.classList.contains('form_page')){
@@ -69,7 +69,7 @@ if(document.body.classList.contains('form_page')){
         signUpForm.style.display = "none";
         loginForm.style.display = "block";
     })
-    signUpButton1.addEventListener("click", () => {
+    signUpForm.addEventListener("submit", (event) => {
         const email = document.querySelector("#email2").value;
         const pass = document.querySelector("#pass2").value;
         const firstName = document.querySelector("#first_name").value;
@@ -80,9 +80,7 @@ if(document.body.classList.contains('form_page')){
 
         if(email === "" || pass === "" || firstName === "" || lastName === "" || username === ""){
             alert("Please fill all required information!");
-        }else{
-        signUpForm.style.display = "none";
-        main.style.filter = "blur(0)";
+            event.preventDefault();
         }
     })
 
@@ -90,10 +88,15 @@ if(document.body.classList.contains('form_page')){
 if(document.body.classList.contains('home_page')){
     const leaderBoard = document.querySelector(".leaderboard");
     const digital_clock = document.querySelector(".digital-clock");
+    const help = document.querySelector(".help");
+
+    help.addEventListener("click", () => {
+        window.location.href = "/help"
+    })
     
 
     leaderBoard.addEventListener("click", () => {
-        window.location.href = "leaderBoard.html";
+        window.location.href = "/leaderboard";
     })
 
     function updateClock(){
@@ -115,6 +118,13 @@ if(document.body.classList.contains('leaderBoard_page')){
     const back = document.querySelector(".back_png");
 
     back.addEventListener("click", () => {
-        window.location.href = "home_page.html";
+        window.location.href = "/home";
+    })
+}
+if(document.body.classList.contains('help_page')){
+    const back = document.querySelector(".back");
+
+    back.addEventListener("click", () => {
+        window.location.href = "/home";
     })
 }

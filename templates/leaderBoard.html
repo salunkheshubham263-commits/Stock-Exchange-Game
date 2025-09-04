@@ -34,13 +34,15 @@
                 <th>Balance</th>
                 <th>Net Worth</th>
             </tr>
+            {% for user in leaderboard %}
             <tr style="color:black;">
-                <td>1</td>
-                <td>Shubham</td>
-                <td>50,000</td>
-                <td>20,000</td>
-                <td>70,000</td>
+                <td>{{ loop.index }}</td>
+                <td>{{ user['Username'] }}</td>
+                <td>₹ {{ user['Portfolio_value']}}</td>
+                <td>₹ {{ user['Balance'] }}</td>
+                <td>₹ {{ user['Net_Worth'] }}</td>
             </tr>
+            {% endfor %}
         </table>
         </div>
     </div>
