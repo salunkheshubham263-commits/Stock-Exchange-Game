@@ -1,7 +1,10 @@
 from flask import Flask, request, redirect, url_for, flash, render_template, session
 import sqlite3
 
+from api.stocks_api import stocks_bp
+
 app = Flask(__name__)
+app.register_blueprint(stocks_bp, url_prefix="/api/stocks")
 
 import os
 from dotenv import load_dotenv
@@ -158,5 +161,9 @@ def help():
 def privacy():
     return render_template("privacyPolicy.html")
 
+
+
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+
