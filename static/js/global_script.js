@@ -130,25 +130,29 @@ if(document.body.classList.contains('help_page')){
 }
 
 async function loadCompanies() {
-  const res = await fetch("/api/stocks/list");
-  const data = await res.json();
-  const table = document.getElementById("companyTable");
+    try{
+        const res = await fetch("/api/stocks/list");
+        const data = await res.json();
+        const table = document.querySelector(".list_of_companies");
 
-  // clear old rows except headers
-  table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove());
+        // clear old rows except headers
+        table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove());
 
-  data.forEach(stock => {
-    let row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${stock.symbol}</td>
-      <td>₹${stock.price}</td>
-      <td>
-        <button onclick="buyStock('${stock.symbol}')">Buy</button>
-        <button onclick="sellStock('${stock.symbol}')">Sell</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
+        data.forEach(stock => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${stock.symbol}</td>
+            <td>₹${stock.price}</td>
+            <td>
+                <button onclick="buyStock('${stock.symbol}')">Buy</button>
+                <button onclick="sellStock('${stock.symbol}')">Sell</button>
+            </td>
+        `;
+        table.appendChild(row);
+      });
+    } catch (err) {
+    console.error("Error Loading Companies: ", err);
+    }
 }
 
 async function buyStock(symbol) {
@@ -179,4 +183,3 @@ async function sellStock(symbol) {
 
 setInterval(loadCompanies, 5000); // refresh prices every 5s
 loadCompanies();
-
