@@ -1,5 +1,7 @@
 import sqlite3
 
+
+
 def init_database():
     conn = sqlite3.connect('stock_game.db')
     cursor = conn.cursor()
@@ -16,6 +18,14 @@ def init_database():
                    Portfolio_value integer default 0,
                    Net_Worth integer default 0,
                    created_at datetime default current_timestamp
+                   )
+
+                   CREATE TABLE IF NOT EXISTS Holdings( 
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   user_id INTEGER NOT NULL,
+                     symbol TEXT NOT NULL,
+                        quantity INTEGER NOT NULL,
+                        FOREIGN KEY (user_id) REFERENCES Users_info(id)
                    )
                    """)
 

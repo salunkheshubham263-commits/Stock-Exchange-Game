@@ -19,7 +19,8 @@ def fetch_stock_price(symbols):
 def list_stocks(): 
     symbols = ["AAPL", "MSFT","GOOG","AMZN","TSLA"] 
     stocks = [] 
-    for s in symbols: stocks.append({"symbol": s, "price": fetch_stock_price(s)}) 
+    for s in symbols: 
+        stocks.append({"symbol": s, "price": fetch_stock_price(s)}) 
     return jsonify(stocks)
 
 @stocks_bp.route("/buy", methods=["POST"]) 
@@ -35,23 +36,43 @@ def buy_stock():
     total_cost = price * qty 
     if balance < total_cost: 
         return jsonify({"status": "error", "message": "not enough balance"}),400 
-    cur.execute("Update user_info set Balance = Balance - ? WHERE id=?",(total_cost,user_id)) 
+    cur.execute("UPDATE Users_info SET Balance = Balance - ? WHERE id=?",(total_cost,user_id)) 
+    
+    holding = cur.execute("SELECT quantity FROM Holdings WHERE user_id=? AND symbol=?",(user_id,symbol)).fetchone()
+    if holding:
+        cur.execute("UPDATE Holdings SET quantity = quantity + ? WHERE user_id=? AND symbol=?",(qty,user_id,symbol))
+    else:
+        cur.execute("INSERT INTO Holdings (user_id, symbol, quantity) VALUES (?,?,?)", (user_id, symbol, qty))   
+   
     conn.commit() 
     conn.close() 
     return jsonify({"status": "ok","message":f"Bought {qty} shares of {symbol}"}) 
 
 @stocks_bp.route("/sell", methods=["POST"]) 
 def sell_stock(): 
-    symbol = request.json["symbol"] 
-    qty = int(request.json["qty"]) 
-    price = fetch_stock_price(symbol) 
-    total_income = price * qty 
-    conn = get_db_connection() 
-    cur = conn.cursor() 
-    user_id = session["user_id"] 
-    cur.execute("UPDATE Users_info SET Balance = Balance + ? WHERE id=?",(total_income,user_id)) 
-    conn.commit() 
-    conn.close() 
-    return jsonify({"status":"ok","message":f"Sold{qty} shares of {symbol}"})
+    symbol = request.json["symbol"]
+    qty = int(request.json["qty"])
+    conn = get_db_connection()
+    cur = conn.cursor()
 
+    user_id = session["user_id"]
+    holding = cur.execute("SELECT quantity FROM Holdings WHERE user_id=? AND symbol=?",(user_id, symbol)).fetchone()
+    
+    if not holding or holding["quantity"] < qty:
+        return jsonify({"status": "error", "message": "not enough shares to sell"}),400
+    
+    price = fetch_stock_price(symbol)
+    total_income = price * qty
 
+    if holding["quantity"] == qty:
+        cur.execute("DELETE FROM Holdings WHERE user_id =? AND symbol=?",(user_id,symbol))
+    else:
+        cur.execute("UPDATE Holdings SET quantity = quantity - ? WHERE user_id=? AND symbol=?",(qty, user_id, symbol))
+
+        cur.execute("UPDATE Users_info SET Balance = Balance + ? WHERE id=?",(total_income, user_id))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}"})
+    
