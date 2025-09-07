@@ -69,10 +69,10 @@ def sell_stock():
     else:
         cur.execute("UPDATE Holdings SET quantity = quantity - ? WHERE user_id=? AND symbol=?",(qty, user_id, symbol))
 
-        cur.execute("UPDATE Users_info SET Balance = Balance + ? WHERE id=?",(total_income, user_id))
+    cur.execute("UPDATE Users_info SET Balance = Balance + ? WHERE id=?",(total_income, user_id))
 
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 
-        return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}"})
+    return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}"})
     
