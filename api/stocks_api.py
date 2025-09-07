@@ -66,4 +66,30 @@ def sell_stock():
 
     conn = get_db_connection()
     cur = conn.cursor()
-    user = cur
+    user = cur.execute("SELECT Balance, POrtfolio FROM Users_info WHERE id=?", (user_id,)).fetchone()
+
+    if not user:
+        conn.close()
+        return jsonify({"status":"error", "message":"User not found"}),404
+    
+    if user["Portfolio"] < qty:
+        conn.close()
+        return({"status":"error","message":"Not enough shares to sell"}),400
+    price = fetch_stock_price(symbol)
+    total_income = price * qty
+
+
+    #Add balance and decrease total shares (portfolio)
+    cur.execute("UPDATE Users_info SET Balance = Balance + ?, Portfolio = Portfolio - ? Where id=?", (total_income, qty, user_id))
+    conn.commit()
+
+    new_data = cur.execute("SELECT Balance, Portfolio FROM Users_info WHERE id=?", (user_id,)).fetchone()
+    conn.close()
+
+
+    return jsonify({
+        "status":"ok",
+        "message": f"sold {qty} shares of {symbol}",
+        "new_balance": new_data["Balance"],
+        "total_shares": new_data["Portfolio"]
+    })

@@ -177,7 +177,11 @@ async function sellStock(symbol) {
     body: JSON.stringify({symbol, qty})
   });
   const result = await res.json();
+  if (!res.ok){ alert(result.message); return;}
   alert(result.message);
+  document.querySelector(".money").textContent = `+₹ ${parseFloat(result.new_balance).toFixed(2)}`;
+  
+  if(document.querySelector(".total_shares")) document.querySelector(".totsl_shares").textContent = result.total_shares;
   loadCompanies();
 }
 
