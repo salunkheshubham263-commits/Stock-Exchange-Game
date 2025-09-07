@@ -129,61 +129,45 @@ if(document.body.classList.contains('help_page')){
     })
 }
 
-async function loadCompanies() {
-    try{
-        const res = await fetch("/api/stocks/list");
-        const data = await res.json();
-        const table = document.querySelector(".list_of_companies");
-
-        // clear old rows except headers
-        table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove());
-
-        data.forEach(stock => {
-        let row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${stock.symbol}</td>
-            <td>₹${stock.price}</td>
-            <td>
-                <button onclick="buyStock('${stock.symbol}')">Buy</button>
-                <button onclick="sellStock('${stock.symbol}')">Sell</button>
-            </td>
-        `;
-        table.appendChild(row);
-      });
-    } catch (err) {
-    console.error("Error Loading Companies: ", err);
-    }
+async function loadCompanies() { 
+    try{ 
+        const res = await fetch("/api/stocks/list"); 
+        const data = await res.json(); 
+        const table = document.querySelector(".list_of_companies"); 
+        // clear old rows except headers 
+        table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove()); 
+        data.forEach(stock => { 
+            let row = document.createElement("tr"); 
+            row.innerHTML = `
+                <td>${stock.symbol}</td>
+                <td>₹${stock.price}</td>
+                <td>
+                    <button onclick="buyStock('${stock.symbol}')">Buy</button>
+                    <button onclick="sellStock('${stock.symbol}')">Sell</button>
+                </td>
+            `; 
+            table.appendChild(row); 
+        }); 
+    } catch (err) { 
+        console.error("Error Loading Companies: ", err); 
+    } 
 }
-
-async function buyStock(symbol) {
-  const qty = prompt(`Enter quantity of ${symbol} to buy:`);
-  if (!qty) return;
-  const res = await fetch("/api/stocks/buy", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({symbol, qty})
-  });
-  const result = await res.json();
-  alert(result.message);
-  loadCompanies();
-}
-
-async function sellStock(symbol) {
-  const qty = prompt(`Enter quantity of ${symbol} to sell:`);
-  if (!qty) return;
-  const res = await fetch("/api/stocks/sell", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({symbol, qty})
-  });
-  const result = await res.json();
-  if (!res.ok){ alert(result.message); return;}
-  alert(result.message);
-  document.querySelector(".money").textContent = `+₹ ${parseFloat(result.new_balance).toFixed(2)}`;
-  
-  if(document.querySelector(".total_shares")) document.querySelector(".totsl_shares").textContent = result.total_shares;
-  loadCompanies();
-}
-
+async function buyStock(symbol) { 
+    const qty = prompt(`Enter quantity of ${symbol} to buy:`); 
+    if (!qty) return; 
+    const res = await fetch("/api/stocks/buy", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({symbol, qty}) }); 
+    const result = await res.json(); 
+    alert(result.message); 
+    loadCompanies(); 
+} 
+async function sellStock(symbol) { 
+    const qty = prompt(`Enter quantity of ${symbol} to sell:`);
+    if (!qty) return; 
+    const res = await fetch("/api/stocks/sell", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({symbol, qty}) });
+    const result = await res.json(); 
+    alert(result.message); 
+    loadCompanies(); 
+} 
+setInterval(loadCompanies, 5000); // refresh prices every 5s loadCompanies();
 setInterval(loadCompanies, 5000); // refresh prices every 5s
 loadCompanies();
