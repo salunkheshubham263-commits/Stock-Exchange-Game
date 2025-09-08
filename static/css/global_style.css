@@ -364,8 +364,8 @@ body.home_page .main .hero1 .chart_container .footer .buy_sell{
     align-items: center;
     justify-content: space-around;
 }
-body.home_page .main .hero1 .chart_container .footer .buy_sell .buy{
-    width: 20vw;
+body.home_page .buy{
+    width: 50%;
     height: 100%;
     display: flex;
     align-items: center;
@@ -378,12 +378,12 @@ body.home_page .main .hero1 .chart_container .footer .buy_sell .buy{
     cursor: pointer;
     transition: ease 0.5s;
 }
-body.home_page .main .hero1 .chart_container .footer .buy_sell .buy:hover{
+body.home_page .buy:hover{
     background-color: rgba(13, 165, 13, 0.893);;
     color: white;
 }
-body.home_page .main .hero1 .chart_container .footer .buy_sell .sell{
-    width: 20vw;
+body.home_page .sell{
+    width: 50%;
     height: 100%;
     display: flex;
     align-items: center;
@@ -396,7 +396,7 @@ body.home_page .main .hero1 .chart_container .footer .buy_sell .sell{
     cursor: pointer;
     transition: ease 0.5s;
 }
-body.home_page .main .hero1 .chart_container .footer .buy_sell .sell:hover{
+body.home_page .sell:hover{
     background-color: red;
     color: white;
 }

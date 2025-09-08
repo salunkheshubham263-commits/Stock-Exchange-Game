@@ -141,9 +141,9 @@ async function loadCompanies() {
         row.innerHTML = `
             <td>${stock.symbol}</td>
             <td>₹${stock.price}</td>
-            <td>
-                <button onclick="buyStock('${stock.symbol}')">Buy</button>
-                <button onclick="sellStock('${stock.symbol}')">Sell</button>
+            <td style="display: flex;">
+                <button class="buy" onclick="buyStock('${stock.symbol}')">Buy</button>
+                <button class="sell" onclick="sellStock('${stock.symbol}')">Sell</button>
             </td>
         `;
         table.appendChild(row);
@@ -196,26 +196,56 @@ let stockChart = new Chart(ctx, {
   type: "line",
   data: {
     labels: [],
-    datasets: [{
-      label: "Stock Price",
-      data: [],
-      borderColor: "blue",
-      borderWidth: 2,
-      fill: false
-    }]
+    datasets: [] //will add dynamically
   }
 });
+
+// Utility function to generate random colors
+function getRandomColor(){
+    return `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
+}
+
+// Store dataset by symbol
+let datasetMap = {};
+
 
 async function updateChart(symbol) {
   const res = await fetch("/api/stocks/list");
   const data = await res.json();
   const stock = data.find(s => s.symbol === symbol);
   if (stock) {
-    stockChart.data.labels.push(new Date().toLocaleTimeString());
-    stockChart.data.datasets[0].data.push(stock.price);
+    // Add dataset if it doesn't exist
+    if(!datasetMap[symbol]){
+        let newDataset = {
+            label: symbol,
+            data: [],
+            borderColor: getRandomColor(),
+            borderWidth: 2,
+            fill: false
+        };
+        datasetMap[symbol] = newDataset;
+        stockChart.data.datasets.push(newDataset);
+    }
+
+    //Add time label only once
+    let currentTime = new Date().toLocaleTimeString();
+    if(
+        stockChart.data.labels.length === 0 ||
+        stockChart.data.labels[stockChart.data.labels.length - 1] !== currentTime
+    ){
+        stockChart.data.labels.push(currentTime);
+    }
+
+    // Push stock price to the correct dataset
+    datasetMap[symbol].data.push(stock.price);
+
     stockChart.update();
   }
 }
 
 // Example: show AAPL live
 setInterval(() => updateChart("AAPL"), 5000);
+setInterval(() => updateChart("MSFT"), 5000);
+setInterval(() => updateChart("GOOG"), 5000);
+setInterval(() => updateChart("AMZN"), 5000);
+setInterval(() => updateChart("TSLA"), 5000);
