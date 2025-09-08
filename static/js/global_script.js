@@ -140,7 +140,7 @@ async function loadCompanies() {
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${stock.symbol}</td>
-            <td>₹${stock.price}</td>
+            <td>$${stock.price}</td>
             <td style="display: flex;">
                 <button class="buy" onclick="buyStock('${stock.symbol}')">Buy</button>
                 <button class="sell" onclick="sellStock('${stock.symbol}')">Sell</button>
@@ -177,7 +177,7 @@ async function sellStock(symbol) {
   const result = await res.json();
   if (!res.ok){ alert(result.message); return;}
   alert(result.message);
-  document.querySelector(".money").textContent = `+₹ ${parseFloat(result.new_balance).toFixed(2)}`;
+  document.querySelector(".money").textContent = `+$ ${parseFloat(result.new_balance).toFixed(2)}`;
   
   if(document.querySelector(".total_shares")) 
     document.querySelector(".totsl_shares").textContent = result.total_shares;
@@ -197,6 +197,31 @@ let stockChart = new Chart(ctx, {
   data: {
     labels: [],
     datasets: [] //will add dynamically
+  },
+  options: {
+    Responsive: true,
+    interation: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+    },
+    plugins: {
+        zoom: {
+            zoom: {
+                wheel: {
+                    enabled: true // zoom with mouse wheel
+                },
+                pinch: {
+                    enabled: true
+                },
+                mode: 'xy' // zoom with X and Y
+            },
+            pan: {
+                enabled: true,
+                mode: 'xy'
+            }
+        }
+    }
   }
 });
 
@@ -249,3 +274,16 @@ setInterval(() => updateChart("MSFT"), 5000);
 setInterval(() => updateChart("GOOG"), 5000);
 setInterval(() => updateChart("AMZN"), 5000);
 setInterval(() => updateChart("TSLA"), 5000);
+
+
+function zoomIn(){
+    stockChart.zoom(1.2); // 1.2 = zoom in by 20%
+}
+
+function zoomOut(){
+    stockChart.zoom(0.8); // 0.8 = zoom out by 20%
+}
+
+function resetZoom(){
+    stockChart.resetZoom();
+}

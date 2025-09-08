@@ -26,7 +26,7 @@
         <div class="digital-clock" style="font-weight: 600; color: black; font-size: 1.5vw;"></div>
         <div style="display: flex; align-items: center" class="money_container">
           <img src="../static/images/game_currancy.png" class="money_icon" />
-          <div class="money">+₹ {{ user['Balance'] }}</div>
+          <div class="money">+$ {{ user['Balance'] }}</div>
         </div>
         <img src="../static/images/setting.png" class="setting_icon" />
       </nav>
@@ -37,6 +37,9 @@
           </div>
           <footer class="footer">
             <button class="history">History</button>
+            <button onclick="zoomIn()" class="zoom">Zoom In</button>
+            <button onclick="zoomOut()" class="zoom">Zoom Out</button>
+            <button onclick="resetZoom()" class="zoom">Reset</button>
           </footer>
         </div>
         <div class="LOC">
@@ -56,6 +59,7 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="../static/js/global_script.js"></script>
   </body>
 </html>

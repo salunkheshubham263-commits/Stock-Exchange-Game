@@ -144,10 +144,9 @@ def get_leaderboard():
     SELECT
         Username,
         Portfolio_value,
-        Balance,
-        (Portfolio_value + Balance) AS Net_Worth
+        Balance
     FROM Users_info
-    ORDER BY Net_Worth DESC
+    ORDER BY Balance DESC
     LIMIT 10
 """).fetchall()
     conn.close()

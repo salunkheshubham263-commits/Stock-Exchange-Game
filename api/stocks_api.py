@@ -44,9 +44,12 @@ def buy_stock():
     else:
         cur.execute("INSERT INTO Holdings (user_id, symbol, quantity) VALUES (?,?,?)", (user_id, symbol, qty))   
    
-    conn.commit() 
-    conn.close() 
-    return jsonify({"status": "ok","message":f"Bought {qty} shares of {symbol}"}) 
+    conn.commit()
+
+    new_balance = cur.execute("SELECT Balance FROM Users_info WHERE id=?", (user_id,)).fetchone()["Balance"]
+    conn.close()
+
+    return jsonify({"status": "ok","message":f"Bought {qty} shares of {symbol}", "new_balance": round(new_balance, 2)}) 
 
 @stocks_bp.route("/sell", methods=["POST"]) 
 def sell_stock(): 
@@ -72,7 +75,9 @@ def sell_stock():
     cur.execute("UPDATE Users_info SET Balance = Balance + ? WHERE id=?",(total_income, user_id))
 
     conn.commit()
+
+    new_balance = cur.execute("SELECT Balance FROM Users_info WHERE id=?", (user_id,)).fetchone()["Balance"]
     conn.close()
 
-    return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}"})
+    return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}","new_balance": round(new_balance, 2)})
     

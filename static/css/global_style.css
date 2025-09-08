@@ -287,13 +287,14 @@ body.home_page .main nav .money_container .money_icon{
 
 }
 body.home_page .main nav .money_container .money{
-    width: 10vw;
+    width: auto;
     color: black;
     background-color: white;
     font-size: 1.3vw;
     height: 5vh;
     font-weight: 600;
     border: 1.5px solid black;
+    padding: 5px;
     border-radius: 25px;
     display: flex;
     align-items: center;
@@ -357,6 +358,25 @@ body.home_page .main .hero1 .chart_container .footer .history:hover{
     background-color: black;
     color: white;
 }
+body.home_page .main .hero1 .chart_container .footer .zoom{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 1.5px solid black;
+    cursor: pointer;
+    transition: ease 0.5s;
+}
+body.home_page .main .hero1 .chart_container .footer .zoom:hover{
+    background-color: black;
+    color: white;
+}
+
 body.home_page .main .hero1 .chart_container .footer .buy_sell{
     width: 35%;
     height: 100%;

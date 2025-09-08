@@ -32,15 +32,13 @@
                 <th>Username</th>
                 <th>Portfolio Value</th>
                 <th>Balance</th>
-                <th>Net Worth</th>
             </tr>
             {% for user in leaderboard %}
             <tr style="color:black;">
                 <td>{{ loop.index }}</td>
                 <td>{{ user['Username'] }}</td>
-                <td>₹ {{ user['Portfolio_value']}}</td>
-                <td>₹ {{ user['Balance'] }}</td>
-                <td>₹ {{ user['Net_Worth'] }}</td>
+                <td> {{ user['Portfolio_value']}}</td>
+                <td>$ {{ user['Balance'] }}</td>
             </tr>
             {% endfor %}
         </table>
