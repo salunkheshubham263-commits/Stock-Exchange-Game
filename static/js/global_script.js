@@ -199,8 +199,8 @@ let stockChart = new Chart(ctx, {
     datasets: [] //will add dynamically
   },
   options: {
-    Responsive: true,
-    interation: {
+    responsive: true,
+    interaction: {
         mode: 'nearest',
         axis: 'x',
         intersect: false
@@ -214,11 +214,21 @@ let stockChart = new Chart(ctx, {
                 pinch: {
                     enabled: true
                 },
-                mode: 'xy' // zoom with X and Y
+                mode: 'xy', // zoom with X and Y
+                onZoom: ({chart}) => {
+                    console.log("Zooming...", chart);
+                }
             },
             pan: {
                 enabled: true,
-                mode: 'xy'
+                mode: 'xy',
+                threshold: 0,
+                onPan: ({chart}) => {
+                    console.log("Panning...", chart);
+                },
+                onPanComplete: ({chart}) => {
+                    console.log("pan complete", chart);
+                }
             }
         }
     }
@@ -269,6 +279,7 @@ async function updateChart(symbol) {
 }
 
 // Example: show AAPL live
+setInterval(() => updateChart("AAPL"), 5000);
 setInterval(() => updateChart("AAPL"), 5000);
 setInterval(() => updateChart("MSFT"), 5000);
 setInterval(() => updateChart("GOOG"), 5000);
