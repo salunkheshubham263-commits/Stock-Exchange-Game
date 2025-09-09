@@ -1,6 +1,8 @@
 import requests 
 from flask import Blueprint, jsonify, request, session 
-
+import time
+price_cache = {}
+last_fetch_time = {}
 import sqlite3, os 
 from dotenv import load_dotenv 
 stocks_bp = Blueprint("stocks", __name__) 
@@ -10,14 +12,23 @@ def get_db_connection():
     conn = sqlite3.connect("stock_game.db") 
     conn.row_factory = sqlite3.Row 
     return conn 
+
+
 def fetch_stock_price(symbols): 
+    now = time.time()
+    if symbols in price_cache and now - last_fetch_time[symbols] < 5:
+        return price_cache[symbols]
+    
     url = f"https://finnhub.io/api/v1/quote?symbol={symbols}&token={API_KEY}" 
     response = requests.get(url) 
-    data = response.json() 
+    data = response.json()
+
+    price_cache[symbols] = data.get("c",0)
+    last_fetch_time[symbols] = now 
     return data.get("c",0) 
 @stocks_bp.route("/list", methods=["GET"]) 
 def list_stocks(): 
-    symbols = ["AAPL", "MSFT","GOOG","AMZN","TSLA"] 
+    symbols = ["AAPL", "MSFT","GOOG","AMZN","NVDA",] 
     stocks = [] 
     for s in symbols: 
         stocks.append({"symbol": s, "price": fetch_stock_price(s)}) 

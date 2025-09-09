@@ -129,14 +129,29 @@ if(document.body.classList.contains('help_page')){
     })
 }
 
-async function loadCompanies() {
-    try{
+let isTrading = false;
+let chartPaused = false;
+let datasetMap = {};
+let latestData = []; // cache to reuse API result
+
+// ================== FETCH STOCK LIST ==================
+async function fetchStockList() {
+    if (isTrading || chartPaused) return; // skip while trading
+    try {
         const res = await fetch("/api/stocks/list");
-        const data = await res.json();
-        const table = document.querySelector(".list_of_companies");
-        // clear old rows except headers
-        table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove());
-        data.forEach(stock => {
+        latestData = await res.json();
+    } catch (err) {
+        console.error("Error fetching stock list:", err);
+    }
+}
+
+// ================== LOAD COMPANIES ==================
+function loadCompanies() {
+    if (isTrading || chartPaused || latestData.length === 0) return;
+    const table = document.querySelector(".list_of_companies");
+    table.querySelectorAll("tr:not(:first-child):not(:nth-child(2))").forEach(tr => tr.remove());
+
+    latestData.forEach(stock => {
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${stock.symbol}</td>
@@ -147,56 +162,17 @@ async function loadCompanies() {
             </td>
         `;
         table.appendChild(row);
-      });
-    } catch (err) {
-    console.error("Error Loading Companies: ", err);
-    }
+    });
 }
 
-async function buyStock(symbol) {
-  const qty = prompt(`Enter quantity of ${symbol} to buy:`);
-  if (!qty) return;
-  const res = await fetch("/api/stocks/buy", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({symbol, qty})
-  });
-  const result = await res.json();
-  alert(result.message);
-  loadCompanies();
-}
-
-async function sellStock(symbol) {
-  const qty = prompt(`Enter quantity of ${symbol} to sell:`);
-  if (!qty) return;
-  const res = await fetch("/api/stocks/sell", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({symbol, qty})
-  });
-  const result = await res.json();
-  if (!res.ok){ alert(result.message); return;}
-  alert(result.message);
-  document.querySelector(".money").textContent = `+$ ${parseFloat(result.new_balance).toFixed(2)}`;
-  
-  if(document.querySelector(".total_shares")) 
-    document.querySelector(".totsl_shares").textContent = result.total_shares;
-  loadCompanies();
-}
-
-setInterval(loadCompanies, 5000); // refresh prices every 5s
-loadCompanies();
-
-
-
-
-
+// ================== CHART ==================
+// Make sure your HTML has: <canvas id="stockchart"></canvas>
 let ctx = document.querySelector("#stockchart").getContext("2d");
 let stockChart = new Chart(ctx, {
   type: "line",
   data: {
     labels: [],
-    datasets: [] //will add dynamically
+    datasets: [] // datasets will be added dynamically
   },
   options: {
     responsive: true,
@@ -235,66 +211,116 @@ let stockChart = new Chart(ctx, {
   }
 });
 
-// Utility function to generate random colors
-function getRandomColor(){
+// Random colors for chart lines
+function getRandomColor() {
     return `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
 }
 
-// Store dataset by symbol
-let datasetMap = {};
+// Update chart with cached data
+function updateChart() {
+    if (isTrading || chartPaused || latestData.length === 0) return;
 
-
-async function updateChart(symbol) {
-  const res = await fetch("/api/stocks/list");
-  const data = await res.json();
-  const stock = data.find(s => s.symbol === symbol);
-  if (stock) {
-    // Add dataset if it doesn't exist
-    if(!datasetMap[symbol]){
-        let newDataset = {
-            label: symbol,
-            data: [],
-            borderColor: getRandomColor(),
-            borderWidth: 2,
-            fill: false
-        };
-        datasetMap[symbol] = newDataset;
-        stockChart.data.datasets.push(newDataset);
-    }
-
-    //Add time label only once
     let currentTime = new Date().toLocaleTimeString();
-    if(
+    if (
         stockChart.data.labels.length === 0 ||
         stockChart.data.labels[stockChart.data.labels.length - 1] !== currentTime
-    ){
+    ) {
         stockChart.data.labels.push(currentTime);
     }
 
-    // Push stock price to the correct dataset
-    datasetMap[symbol].data.push(stock.price);
+    latestData.forEach(stock => {
+        if (!datasetMap[stock.symbol]) {
+            let newDataset = {
+                label: stock.symbol,
+                data: [],
+                borderColor: getRandomColor(),
+                borderWidth: 2,
+                fill: false
+            };
+            datasetMap[stock.symbol] = newDataset;
+            stockChart.data.datasets.push(newDataset);
+        }
+        datasetMap[stock.symbol].data.push(stock.price);
+    });
 
     stockChart.update();
-  }
 }
 
-// Example: show AAPL live
-setInterval(() => updateChart("AAPL"), 5000);
-setInterval(() => updateChart("AAPL"), 5000);
-setInterval(() => updateChart("MSFT"), 5000);
-setInterval(() => updateChart("GOOG"), 5000);
-setInterval(() => updateChart("AMZN"), 5000);
-setInterval(() => updateChart("TSLA"), 5000);
+// ================== BUY FUNCTION ==================
+async function buyStock(symbol) {
+    const qty = prompt(`Enter quantity of ${symbol} to buy:`);
+    if (!qty) return;
 
+    isTrading = true;
+    chartPaused = true;
+    try {
+        const res = await fetch("/api/stocks/buy", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({symbol, qty})
+        });
+        const result = await res.json();
+        alert(result.message);
+    } catch (err) {
+        console.error("Buy request failed: ", err);
+    } finally {
+        isTrading = false;
+        chartPaused = false;
+        await fetchStockList();
+        loadCompanies();
+    }
+}
 
+// ================== SELL FUNCTION ==================
+async function sellStock(symbol) {
+    const qty = prompt(`Enter quantity of ${symbol} to sell:`);
+    if (!qty) return;
+
+    isTrading = true;
+    chartPaused = true;
+    try {
+        const res = await fetch("/api/stocks/sell", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({symbol, qty})
+        });
+        const result = await res.json();
+        if (!res.ok) { alert(result.message); return; }
+        alert(result.message);
+        document.querySelector(".money").textContent = `+$ ${parseFloat(result.new_balance).toFixed(2)}`;
+        if(document.querySelector(".total_shares")) 
+            document.querySelector(".total_shares").textContent = result.total_shares;
+    } catch (err) {
+        console.error("Sell request failed: ", err);
+    } finally {
+        isTrading = false;
+        chartPaused = false;
+        await fetchStockList();
+        loadCompanies();
+    }
+}
+
+// ================== AUTO REFRESH ==================
+// Every 5s fetch once and refresh everything
+setInterval(async () => {
+    await fetchStockList();
+    loadCompanies();
+    updateChart();
+}, 5000);
+
+// Initial load
+(async () => {
+    await fetchStockList();
+    loadCompanies();
+})();
+
+// ================== ZOOM CONTROLS ==================
 function zoomIn(){
-    stockChart.zoom(1.2); // 1.2 = zoom in by 20%
+    stockChart.zoom(1.2); // zoom in by 20%
 }
-
 function zoomOut(){
-    stockChart.zoom(0.8); // 0.8 = zoom out by 20%
+    stockChart.zoom(0.8); // zoom out by 20%
 }
-
 function resetZoom(){
     stockChart.resetZoom();
 }
