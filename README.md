@@ -4,8 +4,6 @@ Author : - Shubham Salunkhe
 
 
 
-I carefully re-read the updated README draft. Everything is clear and consistent, but here are minor corrections and refinements to make it even cleaner and more professional:
-
 
 ---
 
