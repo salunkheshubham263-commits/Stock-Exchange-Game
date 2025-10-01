@@ -26,12 +26,16 @@ def fetch_stock_price(symbols):
     price_cache[symbols] = data.get("c",0)
     last_fetch_time[symbols] = now 
     return data.get("c",0) 
+
 @stocks_bp.route("/list", methods=["GET"]) 
 def list_stocks(): 
-    symbols = ["AAPL", "MSFT","GOOG","AMZN","NVDA",] 
+    symbols = ["AAPL", "MSFT","GOOG","AMZN","TSLA",] 
     stocks = [] 
     for s in symbols: 
-        stocks.append({"symbol": s, "price": fetch_stock_price(s)}) 
+        price = fetch_stock_price(s)
+
+        formatted_price = round(float(price), 2) if price else 0.00
+        stocks.append({"symbol": s, "price": formatted_price}) 
     return jsonify(stocks)
 
 @stocks_bp.route("/buy", methods=["POST"]) 
@@ -91,4 +95,3 @@ def sell_stock():
     conn.close()
 
     return jsonify({"status": "ok","message":f"sold {qty} shares of {symbol}","new_balance": round(new_balance, 2)})
-    

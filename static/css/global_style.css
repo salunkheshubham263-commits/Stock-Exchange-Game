@@ -97,8 +97,9 @@ body.loading_page .main .bottom .start:hover{
     color: white;
 }
 .privacy{
-    color: blue;
-    font-size: 0.8rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-decoration: none;
     transition: 0.5s ease;
 }
@@ -462,4 +463,46 @@ body.help_page .main {
 body.help_page .main .back{
     width: 4vw;
     cursor: pointer;
+}
+
+/* From here we will design account page */
+
+body.account_page .main{
+    background-color: black;
+    width: 100%;
+    height: auto;
+}
+body.account_page .main .log_out{
+    width: 12vw;
+    color: black;
+    background-color: white;
+    font-size: 1.3vw;
+    height: 5vh;
+    font-weight: 600;
+    border: 1.5px solid black;
+    border-radius: 25px;
+    transition: ease 0.5s;
+    cursor: pointer;
+}
+body.account_page .main .log_out:hover{
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+}
+body.account_page .main .sign_out{
+    width: 12vw;
+    color: black;
+    background-color: white;
+    font-size: 1.3vw;
+    height: 5vh;
+    font-weight: 600;
+    border: 1.5px solid black;
+    border-radius: 25px;
+    transition: ease 0.5s;
+    cursor: pointer;
+}
+body.account_page .main .sign_out:hover{
+    background-color: black;
+    color: white;
+    border: 2px solid white;
 }

@@ -1,4 +1,4 @@
-if(document.body.classList.contains('Logo_body')){
+if (document.body.classList.contains('Logo_body')) {
     // After 5 seconds move to loading page.
 
     setTimeout(() => {
@@ -7,7 +7,7 @@ if(document.body.classList.contains('Logo_body')){
 }
 
 
-if(document.body.classList.contains('loading_page')){
+if (document.body.classList.contains('loading_page')) {
     const START = document.querySelector(".start");
     const loader = document.querySelector(".loading_line");
     const privacy = document.querySelector(".privacy")
@@ -25,14 +25,14 @@ if(document.body.classList.contains('loading_page')){
     })
 
 }
-if(document.body.classList.contains('privacyPolicy')){
+if (document.body.classList.contains('privacyPolicy')) {
     const back = document.querySelector(".back");
 
     back.addEventListener("click", () => {
         window.location.href = "/loading"
     })
 }
-if(document.body.classList.contains('form_page')){
+if (document.body.classList.contains('form_page')) {
     const forgotPassword = document.querySelector(".forgot_password");
     const loginForm = document.querySelector("#login_form");
     const password = document.querySelector("#forgotPassword_form");
@@ -43,7 +43,7 @@ if(document.body.classList.contains('form_page')){
     const Back_button1 = document.querySelector("#back_login2");
     const signUpButton1 = document.querySelector("#signUp_button");
 
-        forgotPassword.addEventListener("click", () => {
+    forgotPassword.addEventListener("click", () => {
         password.style.display = "block";
         loginForm.style.display = "none";
     })
@@ -55,10 +55,10 @@ if(document.body.classList.contains('form_page')){
         const email = document.querySelector("#email1").value;
         const pass = document.querySelector("#pass1").value;
 
-        if(email === "" || pass === ""){
+        if (email === "" || pass === "") {
             alert("Please fill email and password");
-        }else{
-        loginForm.style.display = "none";
+        } else {
+            loginForm.style.display = "none";
         }
     })
     signUpButton.addEventListener("click", () => {
@@ -78,31 +78,31 @@ if(document.body.classList.contains('form_page')){
 
 
 
-        if(email === "" || pass === "" || firstName === "" || lastName === "" || username === ""){
+        if (email === "" || pass === "" || firstName === "" || lastName === "" || username === "") {
             alert("Please fill all required information!");
             event.preventDefault();
         }
     })
 
 }
-if(document.body.classList.contains('home_page')){
+if (document.body.classList.contains('home_page')) {
     const leaderBoard = document.querySelector(".leaderboard");
     const digital_clock = document.querySelector(".digital-clock");
-    const help = document.querySelector(".help");
+    const account = document.querySelector(".account_icon");
 
-    help.addEventListener("click", () => {
-        window.location.href = "/help"
+
+    account.addEventListener("click", () => {
+        window.location.href = "/account";
     })
-    
 
     leaderBoard.addEventListener("click", () => {
         window.location.href = "/leaderboard";
     })
 
-    function updateClock(){
+    function updateClock() {
         const now = new Date();
         let hours = now.getHours();
-        const minutes = String(now.getMinutes()).padStart(2,'0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
         const ampm = hours >= 12 ? 'Pm' : 'Am';
 
         hours = hours % 12;
@@ -114,20 +114,80 @@ if(document.body.classList.contains('home_page')){
     setInterval(updateClock, 1000); //refresh every srconds
     updateClock(); //run once at start
 }
-if(document.body.classList.contains('leaderBoard_page')){
+if (document.body.classList.contains('leaderBoard_page')) {
     const back = document.querySelector(".back_png");
 
     back.addEventListener("click", () => {
         window.location.href = "/home";
     })
 }
-if(document.body.classList.contains('help_page')){
-    const back = document.querySelector("#back_png");
+if (document.body.classList.contains('account_page')) {
+    // Delete Account Function
+    async function deleteAccount() {
+        const confirmation = confirm(" WARNING: This will permanently delete your account and all data!\n\nThis action cannot be undone. Are you absolutely sure?");
 
-    back.addEventListener("click", () => {
-        window.location.href = "/home";
-    })
+        if (!confirmation) {
+            return;
+        }
+
+        const secondConfirmation = confirm(" FINAL WARNING: All your stocks, balance, and account data will be permanently deleted!\n\nClick OK to confirm account deletion.");
+
+        if (!secondConfirmation) {
+            return;
+        }
+
+        try {
+            const response = await fetch("/delete-account", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                // Redirect to home page after successful deletion
+                window.location.href = "/";
+            } else {
+                alert("Error: " + result.message);
+            }
+
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            alert("An error occurred while deleting your account. Please try again.");
+        }
+    }
+
+    // Add event listeners when page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        // Back button
+        const backButton = document.querySelector(".back_png");
+        if (backButton) {
+            backButton.addEventListener("click", function () {
+                window.location.href = "/home";
+            });
+        }
+
+        // Log out button
+        const logoutButton = document.querySelector(".log_out");
+        if (logoutButton) {
+            logoutButton.addEventListener("click", function () {
+                window.location.href = "/form";
+            });
+        }
+
+        // Delete account button
+        const deleteButton = document.querySelector(".sign_out");
+        if (deleteButton) {
+            deleteButton.addEventListener("click", deleteAccount);
+        }
+    });
 }
+
+
+
 
 let isTrading = false;
 let chartPaused = false;
@@ -155,7 +215,7 @@ function loadCompanies() {
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${stock.symbol}</td>
-            <td>$${stock.price}</td>
+            <td>$${parseFloat(stock.price).toFixed(2)}</td> <!-- Formated to 2 decimal places -->
             <td style="display: flex;">
                 <button class="buy" onclick="buyStock('${stock.symbol}')">Buy</button>
                 <button class="sell" onclick="sellStock('${stock.symbol}')">Sell</button>
@@ -169,46 +229,46 @@ function loadCompanies() {
 // Make sure your HTML has: <canvas id="stockchart"></canvas>
 let ctx = document.querySelector("#stockchart").getContext("2d");
 let stockChart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [] // datasets will be added dynamically
-  },
-  options: {
-    responsive: true,
-    interaction: {
-        mode: 'nearest',
-        axis: 'x',
-        intersect: false
+    type: "line",
+    data: {
+        labels: [],
+        datasets: [] // datasets will be added dynamically
     },
-    plugins: {
-        zoom: {
+    options: {
+        responsive: true,
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        },
+        plugins: {
             zoom: {
-                wheel: {
-                    enabled: true // zoom with mouse wheel
+                zoom: {
+                    wheel: {
+                        enabled: true // zoom with mouse wheel
+                    },
+                    pinch: {
+                        enabled: true
+                    },
+                    mode: 'xy', // zoom with X and Y
+                    onZoom: ({ chart }) => {
+                        console.log("Zooming...", chart);
+                    }
                 },
-                pinch: {
-                    enabled: true
-                },
-                mode: 'xy', // zoom with X and Y
-                onZoom: ({chart}) => {
-                    console.log("Zooming...", chart);
-                }
-            },
-            pan: {
-                enabled: true,
-                mode: 'xy',
-                threshold: 0,
-                onPan: ({chart}) => {
-                    console.log("Panning...", chart);
-                },
-                onPanComplete: ({chart}) => {
-                    console.log("pan complete", chart);
+                pan: {
+                    enabled: true,
+                    mode: 'xy',
+                    threshold: 0,
+                    onPan: ({ chart }) => {
+                        console.log("Panning...", chart);
+                    },
+                    onPanComplete: ({ chart }) => {
+                        console.log("pan complete", chart);
+                    }
                 }
             }
         }
     }
-  }
 });
 
 // Random colors for chart lines
@@ -256,11 +316,20 @@ async function buyStock(symbol) {
     try {
         const res = await fetch("/api/stocks/buy", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({symbol, qty})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol, qty })
         });
         const result = await res.json();
+
+        if (!res.ok) {
+            alert(result.message);
+            return;
+        }
+
         alert(result.message);
+        // ADD THIS LINE to update balance display after buying
+        document.querySelector(".money").textContent = `+$ ${parseFloat(result.new_balance).toFixed(2)}`;
+
     } catch (err) {
         console.error("Buy request failed: ", err);
     } finally {
@@ -281,14 +350,14 @@ async function sellStock(symbol) {
     try {
         const res = await fetch("/api/stocks/sell", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({symbol, qty})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ symbol, qty })
         });
         const result = await res.json();
         if (!res.ok) { alert(result.message); return; }
         alert(result.message);
         document.querySelector(".money").textContent = `+$ ${parseFloat(result.new_balance).toFixed(2)}`;
-        if(document.querySelector(".total_shares")) 
+        if (document.querySelector(".total_shares"))
             document.querySelector(".total_shares").textContent = result.total_shares;
     } catch (err) {
         console.error("Sell request failed: ", err);
@@ -315,12 +384,12 @@ setInterval(async () => {
 })();
 
 // ================== ZOOM CONTROLS ==================
-function zoomIn(){
+function zoomIn() {
     stockChart.zoom(1.2); // zoom in by 20%
 }
-function zoomOut(){
+function zoomOut() {
     stockChart.zoom(0.8); // zoom out by 20%
 }
-function resetZoom(){
+function resetZoom() {
     stockChart.resetZoom();
 }

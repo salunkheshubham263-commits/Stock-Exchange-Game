@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account</title>
+    <link
+      rel="shortcut icon"
+      type="x-icon"
+      href="../static/images/stock_icon.jpg"
+    />
+    <!--This is the favicon-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/css/global_style.css" />
+  </head>
+  <body class="account_page">
+    <div class="main">
+      <nav>
+        <img
+          style="width: 4vw; cursor: pointer"
+          class="back_png"
+          src="../static/images/back.png"
+        />
+        <div style="width: 60%; letter-spacing: 0.3vw">
+          <h1 style="color: black; font-size: 2.5vw">Account</h1>
+        </div>
+      </nav>
+      <br /><br />
+      <h2 style="padding-left: 20px">
+        User Id : - <span style="color: white">&nbsp;&nbsp;{{user_id}}</span>
+      </h2>
+      <h2 style="padding-left: 20px">
+        User Name : -
+        <span style="color: white">&nbsp;&nbsp;{{ username }}</span>
+      </h2>
+      <br /><br />
+      <div style="padding-left: 20px">
+        {% if owned_shares %}
+        <table border="all" bordercolor="yellow" width="30%">
+          <tr>
+            <th>Sr. No.</th>
+            <th>Share Name</th>
+            <th>Qantity</th>
+          </tr>
+          {% for share in owned_shares %}
+          <tr style="text-align: center">
+            <td style="padding: 8px; color: white">{{ loop.index }}</td>
+            <td style="padding: 8px; color: white">{{ share['symbol'] }}</td>
+            <td style="padding: 8px; color: white">{{ share['quantity'] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p style="color: white">You don't own any stocks yet.</p>
+        {% endif %}
+      </div>
+      <br /><br />
+      <div style="padding-left: 20px">
+        <h2 style="color: white">Portfolio Performance</h2>
+        <table border="all" bordercolor="yellow" width="40%">
+          <tr>
+            <th style="padding: 8px; color: white">Metric</th>
+            <th style="padding: 8px; color: white">Value</th>
+          </tr>
+          <tr style="text-align: center">
+            <td style="padding: 8px; color: white">Total P&L</td>
+            <td
+              style="padding: 8px; color: {% if todays_pnl >= 0 %}green{% else %}red{% endif %};"
+            >
+              {{ "+" if todays_pnl >= 0 else "" }}${{ "%.2f"|format(todays_pnl)
+              }}
+            </td>
+          </tr>
+          <tr style="text-align: center">
+            <td style="padding: 8px; color: white">Cash Invested in Stocks</td>
+            <td style="padding: 8px; color: white">
+              ${{ "%.2f"|format(total_investment) }}
+            </td>
+          </tr>
+          <tr style="text-align: center">
+            <td style="padding: 8px; color: white">Current Portfolio Value</td>
+            <td style="padding: 8px; color: white">
+              ${{ "%.2f"|format(current_value) }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <br /><br />
+      <button class="log_out" style="margin-left: 20px">Log Out</button
+      ><br /><br />
+      <button class="sign_out" style="margin-left: 20px">Delete Account</button>
+    </div>
+    <script src="../static/js/global_script.js"></script>
+  </body>
+</html>

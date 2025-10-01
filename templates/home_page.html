@@ -26,7 +26,7 @@
         <div class="digital-clock" style="font-weight: 600; color: black; font-size: 1.5vw;"></div>
         <div style="display: flex; align-items: center" class="money_container">
           <img src="../static/images/game_currancy.png" class="money_icon" />
-          <div class="money">+$ {{ user['Balance'] }}</div>
+          <div class="money">+$ {{ "%.2f"|format(user['Balance']) }}</div>
         </div>
       </nav>
       <div class="hero1">
@@ -35,7 +35,6 @@
             <canvas id="stockchart" width="400" height="200"></canvas>
           </div>
           <footer class="footer">
-            <button class="history">History</button>
             <button onclick="zoomIn()" class="zoom">Zoom In</button>
             <button onclick="zoomOut()" class="zoom">Zoom Out</button>
             <button onclick="resetZoom()" class="zoom">Reset</button>

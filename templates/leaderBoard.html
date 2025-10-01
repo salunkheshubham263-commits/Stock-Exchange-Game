@@ -38,7 +38,7 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ user['Username'] }}</td>
                 <td> {{ user['Portfolio_value']}}</td>
-                <td>$ {{ user['Balance'] }}</td>
+                <td>$ {{ "%.2f"|format(user['Balance']) }}</td>
             </tr>
             {% endfor %}
         </table>
