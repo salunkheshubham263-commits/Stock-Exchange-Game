@@ -60,7 +60,8 @@ Below are some screenshots from the project.
 <img width="960" height="540" alt="2025-10-03 (12)" src="https://github.com/user-attachments/assets/7e0d6c9b-c5ff-4cf0-9b47-10ab9c742263" />
 
 ## How to Run the Project Locally
-
+1. Install Python (for linux "sudo dnf install python3"
+2. Install pip (for linux "sudo dnf install python3-pip")
 1. Clone the repository:
    ```bash
    git clone https://github.com/salunkheshubham263-commits/Stock-Exchange-Game.git
