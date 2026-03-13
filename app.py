@@ -29,6 +29,10 @@ def intro():
 def loading():
     return render_template("loading_page.html")
 
+@app.route("/privacy")
+def privacy():
+    return render_template("PrivacyPolicy.html")
+
 @app.route("/form")
 def form():
     return render_template("form.html")
@@ -244,10 +248,6 @@ def delete_account():
 @app.route("/help")
 def help():
     return render_template("help.html")
-
-@app.route("/privacy")
-def privacy():
-    return render_template("privacyPolicy.html")
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
