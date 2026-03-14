@@ -27,7 +27,7 @@ def fetch_stock_price(symbols):
         return price_cache[symbols]
 
     url = f"https://finnhub.io/api/v1/quote?symbol={symbols}&token={API_KEY}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=5)
     data = response.json()
 
     price_cache[symbols] = data.get("c", 0)
@@ -50,7 +50,9 @@ def list_stocks():
 def buy_stock():
     symbol = request.json["symbol"]
     qty = int(request.json["qty"])
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Login required"}), 401
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -100,7 +102,9 @@ def buy_stock():
 def sell_stock():
     symbol = request.json["symbol"]
     qty = int(request.json["qty"])
-    user_id = session["user_id"]
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Login required"}), 401
 
     conn = get_db_connection()
     cur = conn.cursor()

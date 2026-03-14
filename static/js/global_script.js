@@ -21,7 +21,7 @@ if (document.body.classList.contains('loading_page')) {
     // when loading line width is 100% move to home page.
 
     loader_line.addEventListener("animationend", () => {
-        window.location.href = "/form  ";
+        window.location.href = "/form";
     })
 
 }

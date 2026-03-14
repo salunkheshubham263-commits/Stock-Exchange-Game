@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, url_for, flash, render_template, session, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlcipher3 import dbapi2 as sqlite3
 from api.stocks_api import stocks_bp
 import os
@@ -11,7 +12,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(stocks_bp, url_prefix="/api/stocks")
-app.secret_key = os.urandom(24)
+app.secret_key = os.getenv("Flask_secret_key")
 
 # -------------------- DATABASE CONNECTION --------------------
 def get_db_connection():
@@ -58,12 +59,13 @@ def signup():
     username = request.form['Username']
     email = request.form['email']
     password = request.form['password']
+    hashed_password = generate_password_hash(password)
 
     conn = get_db_connection()
     try:
         cursor = conn.execute(
             "INSERT INTO Users_info (First_Name, Last_Name, Username, Email_ID, Password) VALUES (?, ?, ?, ?, ?)",
-            (first_name, last_name, username, email, password)
+            (first_name, last_name, username, email, hashed_password)
         )
         conn.commit()
         user_id = cursor.lastrowid
@@ -85,13 +87,13 @@ def login():
     conn = get_db_connection()
     try:
         user = conn.execute(
-            "SELECT * FROM Users_info WHERE Email_ID=? AND Password=?",
-            (email, password)
+            "SELECT * FROM Users_info WHERE Email_ID=?",
+            (email,)
         ).fetchone()
     finally:
         conn.close()
 
-    if user:
+    if user and check_password_hash(user["Password"], password):
         session['user_id'] = user['id']
         session['user'] = user['Username']
         flash("Login successful!", "success")
@@ -104,34 +106,19 @@ def login():
 @app.route('/forgetPassword', methods=['POST'])
 def forget_password():
     email = request.form['email']
+
     conn = get_db_connection()
-    try:
-        user = conn.execute("SELECT Password FROM Users_info WHERE Email_ID=?", (email,)).fetchone()
-    finally:
-        conn.close()
+    user = conn.execute(
+        "SELECT id FROM Users_info WHERE Email_ID=?",
+        (email,)
+    ).fetchone()
+    conn.close()
 
-    if user:
-        password = user["Password"]
-        sender_email = os.getenv("EMAIL_USER")
-        sender_password = os.getenv("EMAIL_PASS")
-        receiver_email = email
-
-        msg = MIMEMultipart()
-        msg['From'] = sender_email
-        msg['To'] = receiver_email
-        msg['Subject'] = "Your Password for Stock Exchange Game"
-        msg.attach(MIMEText(f"Your password is: {password}", 'plain'))
-
-        try:
-            with smtplib.SMTP('smtp.gmail.com', 587) as server:
-                server.starttls()
-                server.login(sender_email, sender_password)
-                server.sendmail(sender_email, receiver_email, msg.as_string())
-            flash("Password sent to your email.", "success")
-        except Exception as e:
-            flash(f"Failed to send email: {str(e)}", "danger")
-    else:
+    if not user:
         flash("Email not found.", "danger")
+        return redirect(url_for('form'))
+
+    flash("Password reset is not implemented yet. Please contact support.", "warning")
     return redirect(url_for('form'))
 
 # -------------------- LEADERBOARD --------------------
@@ -249,6 +236,9 @@ def delete_account():
 def help():
     return render_template("help.html")
 
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # True when using HTTPS
+
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
