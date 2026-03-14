@@ -69,3 +69,5 @@ Below are some screenshots from the project.
 3. pip install -r requirements.txt
 4. python app.py
 5. Open the browser and visit http://localhost:5000
+
+## Live Demo click link : -- https://stock-exchange-game-g7tw.onrender.com
