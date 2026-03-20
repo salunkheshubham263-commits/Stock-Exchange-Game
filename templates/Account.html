@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,6 +17,39 @@
     <link rel="stylesheet" href="../static/css/global_style.css" />
   </head>
   <body class="account_page">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div style="color: white; padding: 10px">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+    <div class="top">
+      <div class="updatePass">
+        <form action="/update-password" method="post">
+          <h1 style="color: black; font-size: 2.2vw; text-align: center">
+            Change Password
+          </h1>
+          <input
+            class="change_pass"
+            name="update_pass1"
+            type="password"
+            placeholder="Enter new password"
+          />
+          <input
+            class="change_pass"
+            name="update_pass2"
+            type="password"
+            placeholder="Confirm new password"
+          /><br />
+          <input id="update" class="update_button" type="submit" value="Update" />
+          <input
+            style="margin-left: 0"
+            id="back_update"
+            class="update_button"
+            type="button"
+            value="Back"
+          />
+        </form>
+      </div>
+    </div>
     <div class="main">
       <nav>
         <img
@@ -28,28 +61,41 @@
           <h1 style="color: black; font-size: 2.5vw">Account</h1>
         </div>
       </nav>
-      
+
       <h2>
         User Id : - <span style="color: white">&nbsp;&nbsp;{{user_id}}</span>
       </h2>
       <h2>
         User Name : -
-        <span style="color: white; font-size: 1.3vw;">&nbsp;&nbsp;{{ username }}</span>
+        <span style="color: white; font-size: 1.3vw"
+          >&nbsp;&nbsp;{{ username }}</span
+        >
       </h2>
-      
+
       <div style="padding-left: 20px">
         {% if owned_shares %}
-        <table style="margin-bottom: 2vh;" border="all" bordercolor="yellow" width="30%">
+        <table
+          style="margin-bottom: 2vh"
+          border="all"
+          bordercolor="yellow"
+          width="30%"
+        >
           <tr>
-            <th style="font-size: 1.2vw;">Sr. No.</th>
-            <th style="font-size: 1.2vw;">Share Name</th>
-            <th style="font-size: 1.2vw;">Quantity</th>
+            <th style="font-size: 1.2vw">Sr. No.</th>
+            <th style="font-size: 1.2vw">Share Name</th>
+            <th style="font-size: 1.2vw">Quantity</th>
           </tr>
           {% for share in owned_shares %}
           <tr style="text-align: center">
-            <td style="padding: 8px; color: white; font-size: 1vw;">{{ loop.index }}</td>
-            <td style="padding: 8px; color: white; font-size: 1vw;">{{ share['symbol'] }}</td>
-            <td style="padding: 8px; color: white; font-size: 1vw;">{{ share['quantity'] }}</td>
+            <td style="padding: 8px; color: white; font-size: 1vw">
+              {{ loop.index }}
+            </td>
+            <td style="padding: 8px; color: white; font-size: 1vw">
+              {{ share['symbol'] }}
+            </td>
+            <td style="padding: 8px; color: white; font-size: 1vw">
+              {{ share['quantity'] }}
+            </td>
           </tr>
           {% endfor %}
         </table>
@@ -57,16 +103,23 @@
         <p style="color: white">You don't own any stocks yet.</p>
         {% endif %}
       </div>
-      
+
       <div style="padding-left: 20px">
         <h2>Portfolio Performance</h2>
-        <table style="margin-bottom: 2vh;" border="all" bordercolor="yellow" width="40%">
+        <table
+          style="margin-bottom: 2vh"
+          border="all"
+          bordercolor="yellow"
+          width="40%"
+        >
           <tr>
-            <th style="padding: 8px; color: white; font-size: 1.2vw;">Metric</th>
-            <th style="padding: 8px; color: white; font-size: 1.2vw;">Value</th>
+            <th style="padding: 8px; color: white; font-size: 1.2vw">Metric</th>
+            <th style="padding: 8px; color: white; font-size: 1.2vw">Value</th>
           </tr>
           <tr style="text-align: center">
-            <td style="padding: 8px; color: white; font-size: 1vw;">Total P&L</td>
+            <td style="padding: 8px; color: white; font-size: 1vw">
+              Total P&L
+            </td>
             <td
               style="padding: 8px; color: {% if todays_pnl >= 0 %}green{% else %}red{% endif %}; font-size: 1.2vw;"
             >
@@ -75,22 +128,28 @@
             </td>
           </tr>
           <tr style="text-align: center">
-            <td style="padding: 8px; color: white; font-size: 1.2vw;">Cash Invested in Stocks</td>
-            <td style="padding: 8px; color: white; font-size: 1.2vw;">
+            <td style="padding: 8px; color: white; font-size: 1.2vw">
+              Cash Invested in Stocks
+            </td>
+            <td style="padding: 8px; color: white; font-size: 1.2vw">
               ${{ "%.2f"|format(total_investment) }}
             </td>
           </tr>
           <tr style="text-align: center">
-            <td style="padding: 8px; color: white; font-size: 1.2vw;">Current Portfolio Value</td>
-            <td style="padding: 8px; color: white; font-size: 1.2vw;">
+            <td style="padding: 8px; color: white; font-size: 1.2vw">
+              Current Portfolio Value
+            </td>
+            <td style="padding: 8px; color: white; font-size: 1.2vw">
               ${{ "%.2f"|format(current_value) }}
             </td>
           </tr>
         </table>
       </div>
-      
-      <button class="log_out" style="margin-left: 20px">Log Out</button
-      >
+
+      <button class="change_password" style="margin-left: 20px">
+        Change Password
+      </button>
+      <button class="log_out" style="margin-left: 20px">Log Out</button>
       <button class="sign_out" style="margin-left: 20px">Delete Account</button>
     </div>
     <script src="../static/js/global_script.js"></script>

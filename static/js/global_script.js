@@ -183,7 +183,22 @@ if (document.body.classList.contains('account_page')) {
         if (deleteButton) {
             deleteButton.addEventListener("click", deleteAccount);
         }
+
+        //Change Password
+        const ChangePasswordButton = document.querySelector(".change_password");
+        const updatePass = document.querySelector(".top");
+        const back = document.querySelector("#back_update");
+        if(ChangePasswordButton){
+            ChangePasswordButton.addEventListener("click", () => {
+                updatePass.style.display = "flex";
+            })
+        }
+        back.addEventListener("click", () => {
+            updatePass.style.display = "none";
+        })
     });
+
+    
 }
 
 

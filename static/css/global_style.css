@@ -525,3 +525,69 @@ body.account_page .main .sign_out:hover{
     color: white;
     border: 2px solid white;
 }
+body.account_page .main .change_password{
+    width: 15vw;
+    color: black;
+    background-color: white;
+    font-size: 1.3vw;
+    height: 5vh;
+    font-weight: 600;
+    border: 1.5px solid black;
+    border-radius: 25px;
+    transition: ease 0.5s;
+    cursor: pointer;
+}
+body.account_page .main .change_password:hover{
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+}
+body.account_page .top{
+    position: absolute;
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+body.account_page .top .updatePass{
+    width: 50%;
+    height: 40vh;
+    background-color: #E4E4E4;
+}
+body.account_page .top .updatePass .change_pass{
+    width: 30vw;
+    height: 5vh;
+    border-radius: 20px;
+    background-color: white;
+    border: 1.5px solid white;
+    padding: 15px;
+    color: black;
+    font-weight: 550;
+    font-size: 1.2vw;
+    margin-top: 30px;
+    margin-left: 19.5%;
+}
+body.account_page .top .updatePass .change_pass:active{
+    border: 0.5px solid black;
+}
+body.account_page .top .updatePass .update_button{
+    width: 15vw;
+    color: black;
+    background-color: white;
+    font-size: 1.3vw;
+    height: 5vh;
+    font-weight: 600;
+    border: 1.5px solid black;
+    border-radius: 25px;
+    transition: ease 0.5s;
+    cursor: pointer;
+    margin-top: 5%;
+    margin-left: 19.5%;
+}
+body.account_page .top .updatePass .update_button:hover{
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+}

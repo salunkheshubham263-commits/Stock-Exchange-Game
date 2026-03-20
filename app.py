@@ -103,6 +103,9 @@ def login():
         return redirect(url_for('form'))
 
 # -------------------- FORGOT PASSWORD --------------------
+import random
+import string
+
 @app.route('/forgetPassword', methods=['POST'])
 def forget_password():
     email = request.form['email']
@@ -112,13 +115,45 @@ def forget_password():
         "SELECT id FROM Users_info WHERE Email_ID=?",
         (email,)
     ).fetchone()
-    conn.close()
 
     if not user:
+        conn.close()
         flash("Email not found.", "danger")
         return redirect(url_for('form'))
 
-    flash("Password reset is not implemented yet. Please contact support.", "warning")
+    # Generate temporary password
+    temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+    hashed_password = generate_password_hash(temp_password)
+
+    conn.execute(
+        "UPDATE Users_info SET Password=? WHERE Email_ID=?",
+        (hashed_password, email)
+    )
+    conn.commit()
+    conn.close()
+
+    sender_email = os.getenv("EMAIL_USER")
+    sender_password = os.getenv("EMAIL_PASS")
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = email
+    msg['Subject'] = "Stock Exchange Game - Password Reset"
+
+    msg.attach(MIMEText(f"Your temporary password is: {temp_password}", 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, email, msg.as_string())
+
+        flash("Temporary password sent to your email.", "success")
+
+    except Exception as e:
+        flash(f"Email sending failed: {str(e)}", "danger")
+
     return redirect(url_for('form'))
 
 # -------------------- LEADERBOARD --------------------
@@ -231,6 +266,46 @@ def delete_account():
     finally:
         conn.close()
 
+# -------------------- Update Pass -------------------
+@app.route("/update-password", methods=["POST"])
+def update_password():
+    if "user_id" not in session:
+        flash("Please login first.", "danger")
+        return redirect(url_for('form'))  # NOT 401
+
+    newPass = request.form['update_pass1']
+    confirmPass = request.form['update_pass2']
+
+    # Validation
+    if not newPass or not confirmPass:
+        flash("Please fill all fields.", "danger")
+        return redirect(url_for('account'))
+
+    if newPass != confirmPass:
+        flash("Passwords do not match.", "danger")
+        return redirect(url_for('account'))
+
+    if len(newPass) < 6:
+        flash("Password must be at least 6 characters.", "danger")
+        return redirect(url_for('account'))
+
+    hashed_password = generate_password_hash(newPass)
+
+    conn = get_db_connection()
+    try:
+        conn.execute(
+            "UPDATE Users_info SET Password=? WHERE id=?",
+            (hashed_password, session["user_id"])
+        )
+        conn.commit()
+        flash("Password updated successfully!", "success")
+    except Exception as e:
+        conn.rollback()
+        flash("Something went wrong!", "danger")
+    finally:
+        conn.close()
+
+    return redirect(url_for('form'))
 # -------------------- OTHER PAGES --------------------
 @app.route("/help")
 def help():
@@ -241,4 +316,4 @@ app.config['SESSION_COOKIE_SECURE'] = False  # True when using HTTPS
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
