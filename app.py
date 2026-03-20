@@ -144,7 +144,7 @@ def forget_password():
     msg.attach(MIMEText(f"Your temporary password is: {temp_password}", 'plain'))
 
     try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        with smtplib.SMTP('smtp.gmail.com', 587, timeout=10) as server:
             server.starttls()
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, email, msg.as_string())
