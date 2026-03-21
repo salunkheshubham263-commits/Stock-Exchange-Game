@@ -105,6 +105,17 @@ def login():
 # -------------------- FORGOT PASSWORD --------------------
 import random
 import string
+import threading
+
+def send_email_async(sender_email, sender_password, email, msg):
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587, timeout=10) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, email, msg.as_string())
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Email failed:", e)
 
 @app.route('/forgetPassword', methods=['POST'])
 def forget_password():
@@ -141,18 +152,19 @@ def forget_password():
     msg['To'] = email
     msg['Subject'] = "Stock Exchange Game - Password Reset"
 
-    msg.attach(MIMEText(f"Your temporary password is: {temp_password}", 'plain'))
+    msg.attach(MIMEText(f"""
+    <p>Your temporary password is: <b>{temp_password}</b></p>
+    <p>Use this password to log in.</p>
+    <p>Change your password immediately.</p>
+    <p>You can change your password in the Account section after logging in.</p>
+    <p>If you did not request this, ignore this email.</p>
+    """, 'html'))
 
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587, timeout=10) as server:
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, email, msg.as_string())
+    #Start email in background thread
+    thread = threading.Thread(target=send_email_async, args=(sender_email, sender_password, email, msg))
+    thread.start()
 
-        flash("Temporary password sent to your email.", "success")
-
-    except Exception as e:
-        flash(f"Email sending failed: {str(e)}", "danger")
+    flash("Temporary password sent to your email.","success")
 
     return redirect(url_for('form'))
 
@@ -316,4 +328,4 @@ app.config['SESSION_COOKIE_SECURE'] = False  # True when using HTTPS
 
 # -------------------- MAIN --------------------
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
