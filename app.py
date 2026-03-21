@@ -106,6 +106,37 @@ def login():
 import random
 import string
 import threading
+import requests
+
+def send_email_resend(to_email, temp_password):
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "Stock Game <onboarding@resend.dev>",
+                "to": [to_email],
+                "subject": "Stock Exchange Game - Password Reset",
+                "html": f"""
+                    <h2>Password Reset</h2>
+                    <p>Your temporary password is:</p>
+                    <h1>{temp_password}</h1>
+                    <p>Login and change it immediately.</p>
+                    <p>You can change your password in the Account section after logging in.</p>
+                    <p>If you did not request this, ignore this email.</p>
+                """
+            }
+        )
+
+        print("Resend status:", response.status_code)
+        print("Resend response:", response.text)
+
+    except Exception as e:
+        print("Resend error:", e)
+
 
 def send_email_async(sender_email, sender_password, email, msg):
     try:
@@ -134,7 +165,6 @@ def forget_password():
 
     # Generate temporary password
     temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-
     hashed_password = generate_password_hash(temp_password)
 
     conn.execute(
@@ -144,28 +174,14 @@ def forget_password():
     conn.commit()
     conn.close()
 
-    sender_email = os.getenv("EMAIL_USER")
-    sender_password = os.getenv("EMAIL_PASS")
-
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = email
-    msg['Subject'] = "Stock Exchange Game - Password Reset"
-
-    msg.attach(MIMEText(f"""
-    <p>Your temporary password is: <b>{temp_password}</b></p>
-    <p>Use this password to log in.</p>
-    <p>Change your password immediately.</p>
-    <p>You can change your password in the Account section after logging in.</p>
-    <p>If you did not request this, ignore this email.</p>
-    """, 'html'))
-
-    #Start email in background thread
-    thread = threading.Thread(target=send_email_async, args=(sender_email, sender_password, email, msg))
+    # Send email in background thread
+    thread = threading.Thread(
+        target=send_email_resend,
+        args=(email, temp_password)
+    )
     thread.start()
 
-    flash("Temporary password sent to your email.","success")
-
+    flash("Temporary password sent to your email.", "success")
     return redirect(url_for('form'))
 
 # -------------------- LEADERBOARD --------------------
